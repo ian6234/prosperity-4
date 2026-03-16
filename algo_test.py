@@ -40,8 +40,8 @@ class Trader:
         order_depth = state.order_depths[product]
         orders = []
 
-        remaining_bids = order_depth.sell_orders
-        remaining_asks = order_depth.buy_orders
+        remaining_bids = order_depth.buy_orders
+        remaining_asks = order_depth.sell_orders
 
         last_ask = -1
         last_bid = -1
@@ -75,7 +75,7 @@ class Trader:
                     break
 
             if last_ask != -1:
-                print(f"BUY {product}", str(buy_quantity) + "x", last_ask)
+             #   print(f"BUY {product}", str(buy_quantity) + "x", last_ask)
                 orders.append(Order(product, last_ask, buy_quantity))
                 new_position = position + buy_quantity
 
@@ -103,7 +103,7 @@ class Trader:
                     break
 
             if last_bid != -1:
-                print(f"SELL {product}", str(-sell_quantity) + "x", last_bid)
+            #    print(f"SELL {product}", str(-sell_quantity) + "x", last_bid)
                 orders.append(Order(product, last_bid, -sell_quantity))
                 new_position = position - sell_quantity
 
@@ -114,7 +114,7 @@ class Trader:
             last_ask, amount = list(remaining_asks.items())[0]
             if last_ask - 1 > fair_value:
                 ask_quantity = pos_limit + new_position
-                print(f"ASK {product}", str(-ask_quantity) + "x", last_ask)
+            #    print(f"ASK {product}", str(-ask_quantity) + "x", last_ask - 1)
                 orders.append(Order(product, last_ask - 1, -ask_quantity))
 
         if len(remaining_bids) != 0:
@@ -122,17 +122,12 @@ class Trader:
             last_bid, amount = list(remaining_bids.items())[0]
             if last_bid + 1 < fair_value:
                 bid_quantity = pos_limit - new_position
-                print(f"BID {product}", str(bid_quantity) + "x", last_bid)
+             #   print(f"BID {product}", str(bid_quantity) + "x", last_bid + 1)
                 orders.append(Order(product, last_bid + 1, bid_quantity))
-
-        return orders
-
-
 
         return orders, new_position
 
 
-        return orders
     def bid(self):
         return 15
 
@@ -142,8 +137,8 @@ class Trader:
 
         pos_limits = {"EMERALDS": 80, "TOMATOES": 80}
 
-        print("traderData: " + state.traderData)
-        print("Observations: " + str(state.observations))
+       # print("traderData: " + state.traderData)
+      #  print("Observations: " + str(state.observations))
 
         # Orders to be placed on exchange matching engine
         result = {}
@@ -161,9 +156,9 @@ class Trader:
 
             if fair_value == -1:
                 continue
-            print("Acceptable price : " + str(fair_value))
-            print("Buy Order depth : " + str(len(order_depth.buy_orders)) + ", Sell order depth : " + str(
-                len(order_depth.sell_orders)))
+           # print("Acceptable price : " + str(fair_value))
+           # print("Buy Order depth : " + str(len(order_depth.buy_orders)) + ", Sell order depth : " + str(
+           #     len(order_depth.sell_orders)))
 
             # Order Execution logic
             # Basic logic: clear the market, then place resting orders.
