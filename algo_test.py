@@ -15,12 +15,14 @@ class Trader:
         total_volume = 0
         if len(asks) != 0:
             for price_level in asks:
-                weighted_mid += price_level * asks[price_level]
-                total_volume += asks[price_level]
+                weighted_mid += price_level * abs(asks[price_level])
+                total_volume += abs(asks[price_level])
         if len(bids) != 0:
             for price_level in bids:
                 weighted_mid += price_level * bids[price_level]
                 total_volume += bids[price_level]
+        if total_volume == 0:
+            return -1
         weighted_mid = weighted_mid / total_volume
         return weighted_mid
 
@@ -96,7 +98,7 @@ class Trader:
             order_depth: OrderDepth = state.order_depths[product]
             orders: List[Order] = []
 
-            current_position = state.position[product]
+            current_position = state.position.get(product, 0)
 
             fair_value = 10
             if product == "EMERALDS":
@@ -104,6 +106,8 @@ class Trader:
             elif product == "TOMATOES":
                 fair_value = self.tomato_price(state)
 
+            if fair_value == -1:
+                continue
             print("Acceptable price : " + str(fair_value))
             print("Buy Order depth : " + str(len(order_depth.buy_orders)) + ", Sell order depth : " + str(
                 len(order_depth.sell_orders)))
@@ -114,6 +118,6 @@ class Trader:
 
             result[product] = orders
 
-        traderData = ""  # No state needed - we check position directly
+        traderData = "test!"  # No state needed - we check position directly
         conversions = 0
         return result, conversions, traderData
