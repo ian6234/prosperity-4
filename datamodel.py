@@ -10,8 +10,7 @@ Position = int
 UserId = str
 ObservationValue = int
 
-sugarPrice = float
-sunlightIndex = int
+
 
 
 class Listing:
@@ -31,8 +30,8 @@ class ConversionObservation:
         self.transportFees = transportFees
         self.exportTariff = exportTariff
         self.importTariff = importTariff
-        self.sugarPrice = sugarPrice
-        self.sunlightIndex = sunlightIndex
+        self.sugarPrice = humidity
+        self.sunlightIndex = sunlight
 
 
 class Observation:
