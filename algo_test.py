@@ -40,20 +40,39 @@ class Trader:
         order_depth = state.order_depths[product]
         orders = []
 
+        remaining_bids = order_depth.sell_orders
+        remaining_asks = order_depth.buy_orders
+
         last_ask = -1
         last_bid = -1
-        threshold = 0
+
         new_position = position
+
+        # Taker Logic
 
         if len(order_depth.sell_orders) != 0:
             buy_quantity = 0
-
+            max_quantity = pos_limit - position
             for ask, quantity in list(order_depth.sell_orders.items()):
-                if float(ask) + threshold - fair_value < 0:
-                    buy_quantity += quantity
-                    if -buy_quantity < (pos_limit - position):
-                        last_ask = ask
-            buy_quantity = min(-buy_quantity, pos_limit - position)
+                # if ask below fair value, buy
+                if float(ask) - fair_value < 0:
+                    # if current quantity exceeds position limit, stop.
+                    capacity = max_quantity - abs(buy_quantity)
+                    if capacity <= 0:
+                        break
+
+                    take_quantity = min(capacity, abs(quantity))
+                    buy_quantity += take_quantity
+
+                    last_ask = ask
+
+                    remaining_asks[ask] -= take_quantity
+                    if remaining_asks[ask] == 0:
+                        del remaining_asks[ask]
+
+                # otherwise stop
+                else:
+                    break
 
             if last_ask != -1:
                 print(f"BUY {product}", str(buy_quantity) + "x", last_ask)
@@ -62,19 +81,53 @@ class Trader:
 
         if len(order_depth.buy_orders) != 0:
             sell_quantity = 0
-
+            max_quantity = pos_limit + position
             for bid, quantity in list(order_depth.buy_orders.items()):
-                if float(bid) - threshold - fair_value > 0:
-                    sell_quantity += quantity
-                    if sell_quantity < (pos_limit + position):
-                        last_bid = bid
+                # if bid above fair value, sell
+                if float(bid) - fair_value > 0:
+                    # if current quantity exceeds position limit, stop.
+                    capacity = max_quantity - abs(sell_quantity)
+                    if capacity <= 0:
+                        break
 
-            sell_quantity = min(sell_quantity, pos_limit + position)
+                    take_quantity = min(capacity, abs(quantity))
+                    sell_quantity += take_quantity
+
+                    last_bid = bid
+
+                    remaining_bids[bid] -= take_quantity
+                    if remaining_bids[bid] == 0:
+                        del remaining_bids[bid]
+                # otherwise stop
+                else:
+                    break
 
             if last_bid != -1:
                 print(f"SELL {product}", str(-sell_quantity) + "x", last_bid)
                 orders.append(Order(product, last_bid, -sell_quantity))
                 new_position = position - sell_quantity
+
+        # Maker Logic
+
+        if len(remaining_asks) != 0:
+
+            last_ask, amount = list(remaining_asks.items())[0]
+            if last_ask - 1 > fair_value:
+                ask_quantity = pos_limit + new_position
+                print(f"ASK {product}", str(-ask_quantity) + "x", last_ask)
+                orders.append(Order(product, last_ask - 1, -ask_quantity))
+
+        if len(remaining_bids) != 0:
+
+            last_bid, amount = list(remaining_bids.items())[0]
+            if last_bid + 1 < fair_value:
+                bid_quantity = pos_limit - new_position
+                print(f"BID {product}", str(bid_quantity) + "x", last_bid)
+                orders.append(Order(product, last_bid + 1, bid_quantity))
+
+        return orders
+
+
 
         return orders, new_position
 
