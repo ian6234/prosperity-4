@@ -69,36 +69,39 @@ async def run_backtest(tomato_threshold: int = Query(default=2)):
         # own trades data
         position = 0
         cash = 0
-        for trade in bt.trade_log[product]:
-            side = "SELL"
-            if trade.buyer == "SUBMISSION":
-                position += trade.quantity
-                cash -= trade.quantity * trade.price
-                side = "BUY"
-            else:
-                position -= trade.quantity
-                cash += trade.quantity * trade.price
+        for trade_batch in bt.trade_log[product]:
+
+            timestamp = trade_batch['timestamp']
+            for trade in trade_batch['trades']:
+                side = "SELL"
+                if trade.buyer == "SUBMISSION":
+                    position += trade.quantity
+                    cash -= trade.quantity * trade.price
+                    side = "BUY"
+                else:
+                    position -= trade.quantity
+                    cash += trade.quantity * trade.price
+
+                # log every trade for the order book separately
+                own_trades[product].append({
+                    "timestamp": int(trade.timestamp),
+                    "price": trade.price,
+                    "quantity": trade.quantity,
+                    "side": side
+                })
+
             mid_price = bt.order_data[bt.order_data['product'] == product]
-            mid_price = mid_price[mid_price['timestamp'] == int(trade.timestamp)]['mid_price']
+            mid_price = mid_price[mid_price['timestamp'] == int(timestamp)]['mid_price']
+
+            # only log profit and position once per batch of trades.
             chart_data[product].append({
-                "timestamp": int(trade.timestamp),
+                "timestamp": int(timestamp),
                 "profit": cash + position * float(mid_price.values[0]),
                 "position": position,
             })
-            own_trades[product].append({
-                "timestamp": int(trade.timestamp),
-                "price": trade.price,
-                "quantity": trade.quantity,
-                "side": side,
-                "pnl": cash + position * float(mid_price.values[0])
-            })
-
-        total_profit += own_trades[product][-1]["pnl"]
 
 
-
-
-
+        total_profit += chart_data[product][-1]["profit"]
 
 
     return {"message":

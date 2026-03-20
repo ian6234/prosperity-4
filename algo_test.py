@@ -41,18 +41,28 @@ class Trader:
 
 
     # Execution Logic
-    def basic_execution(self, product, pos_limit, position, fair_value, threshold, state: TradingState):
+    def basic_execution(self, product, pos_limit, position, fair_value, max_threshold, state: TradingState):
 
         order_depth = state.order_depths[product]
         orders = []
 
-        remaining_bids = order_depth.buy_orders
-        remaining_asks = order_depth.sell_orders
+        remaining_bids = dict(order_depth.buy_orders)
+        remaining_asks = dict(order_depth.sell_orders)
 
         last_ask = -1
         last_bid = -1
 
         new_position = position
+
+        # create thresholds (skewing) based on current position vs limit.
+        # if at positive pos limit, selling threshold drops to 0.
+        if position >= 0:
+            buy_threshold = round(max_threshold * (1 + abs(position) / pos_limit))
+            sell_threshold = round(max_threshold * (1 - abs(position) / pos_limit))
+        else:
+            buy_threshold = round(max_threshold * (1 - abs(position) / pos_limit))
+            sell_threshold = round(max_threshold * (1 + abs(position) / pos_limit))
+
 
         # Taker Logic
 
@@ -61,7 +71,7 @@ class Trader:
             max_quantity = pos_limit - position
             for ask, quantity in list(order_depth.sell_orders.items()):
                 # if ask below fair value, buy
-                if float(ask) + threshold - fair_value < 0:
+                if float(ask) + buy_threshold - fair_value <= 0:
                     # if current quantity exceeds position limit, stop.
                     capacity = max_quantity - abs(buy_quantity)
                     if capacity <= 0:
@@ -90,7 +100,7 @@ class Trader:
             max_quantity = pos_limit + position
             for bid, quantity in list(order_depth.buy_orders.items()):
                 # if bid above fair value, sell
-                if float(bid) - threshold - fair_value > 0:
+                if float(bid) - sell_threshold - fair_value >= 0:
                     # if current quantity exceeds position limit, stop.
                     capacity = max_quantity - abs(sell_quantity)
                     if capacity <= 0:
@@ -180,12 +190,12 @@ class Trader:
             if product == "EMERALDS":
                 fair_value = self.emerald_price()  # Participant should calculate this value
                 edge = 7
-                threshold = 0
+                threshold = 1
             elif product == "TOMATOES":
                 fair_value = self.tomato_price(state)
                 fair_value = round(fair_value)
                 edge = 6
-                threshold = 2
+                threshold = 1
 
            # print("Acceptable price : " + str(fair_value))
            # print("Buy Order depth : " + str(len(order_depth.buy_orders)) + ", Sell order depth : " + str(

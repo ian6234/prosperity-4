@@ -326,7 +326,13 @@ class Backtester:
         # step 5 - update position and record trade history
         for product in self.listings:
             self.position[product] += step_delta[product]
-            self.trade_log[product].extend(self.own_trades[product])
+
+            if len(self.own_trades[product]) != 0:
+                self.trade_log[product].append(
+                    {
+                        "timestamp": self.timestamp,
+                        "trades": self.own_trades[product]
+                    })
 
         # any final things
         self.timestamp += 100
