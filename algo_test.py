@@ -174,6 +174,7 @@ class Trader:
             current_position = state.position.get(product, 0)
 
             edge = 1
+            threshold = 0
 
             fair_value = 10
             if product == "EMERALDS":

@@ -155,10 +155,10 @@ class OrderBook:
 
 class Backtester:
 
-    def __init__(self):
+    def __init__(self, algorithm):
         self.timestamp = 0
 
-        self.algo = Trader()
+        self.algo = algorithm
 
         self.trader_data = ""
         # add all new products to listings and position limits.
@@ -182,25 +182,21 @@ class Backtester:
         self.own_trades = {p: [] for p in self.listings}
         self.position = {p: 0 for p in self.listings}
 
-        price_data_1 = pd.read_csv('data/TUTORIAL_ROUND_1/prices_round_0_day_-2.csv', header=0, sep=';')
-        price_data_2 = pd.read_csv('data/TUTORIAL_ROUND_1/prices_round_0_day_-1.csv', header=0, sep=';')
-        # add 1 day to price data 2
-        price_data_2['timestamp'] += 1000000
 
-        self.order_data = pd.concat([price_data_1, price_data_2])
 
-        trades_data_1 = pd.read_csv('data/TUTORIAL_ROUND_1/trades_round_0_day_-2.csv', header=0, sep=';')
-        trades_data_2 = pd.read_csv('data/TUTORIAL_ROUND_1/trades_round_0_day_-1.csv', header=0, sep=';')
-        # add 1 day to trades data 2
-        trades_data_2['timestamp'] += 1000000
+        # load backtest data (multiple days combined)
 
-        self.trades_data = pd.concat([trades_data_1, trades_data_2])
+        self.order_data = pd.read_csv('data/tutorial/prices_combined.csv', header=0, sep=';')
+
+        self.trades_data = pd.read_csv('data/tutorial/trades_combined.csv', header=0, sep=';')
 
         self.up_to = 2000000
         self.order_data = self.order_data[self.order_data['timestamp'] < self.up_to]
         self.trades_data = self.trades_data[self.trades_data['timestamp'] < self.up_to]
 
+        # critical data logs
         self.trade_log = {p: [] for p in self.listings}
+        self.my_book_log = {p: [] for p in self.listings}
 
     def step(self):
 
@@ -293,6 +289,15 @@ class Backtester:
                 unfilled_qty = order.quantity - filled if order.quantity > 0 else order.quantity + filled
                 if unfilled_qty != 0:
                     order_book.add_to_book(Order(product, order.price, unfilled_qty), is_mine=True)
+
+            # step 3.5 - save own resting book!
+            self.my_book_log[product].append({
+                "timestamp": self.timestamp,
+                "market_buy_orders": dict(order_depths[product].buy_orders),
+                "market_sell_orders": dict(order_depths[product].sell_orders),
+                "my_buy_orders": dict(order_book.my_buy_orders),
+                "my_sell_orders": dict(order_book.my_sell_orders),
+            })
 
         # step 4 - check if any resting orders are filled against trades.csv
         trades_today = self.trades_data[self.trades_data['timestamp'] == self.timestamp]
