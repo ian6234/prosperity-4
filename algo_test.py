@@ -121,7 +121,7 @@ class BaseProduct():
 
                     last_ask = ask
 
-                    remaining_asks[ask] -= take_quantity
+                    remaining_asks[ask] += take_quantity
                     if remaining_asks[ask] == 0:
                         del remaining_asks[ask]
 
