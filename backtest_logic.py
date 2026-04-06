@@ -155,7 +155,7 @@ class OrderBook:
 
 class Backtester:
 
-    def __init__(self, algorithm):
+    def __init__(self, algorithm, use_full=False):
         self.timestamp = 0
 
         self.algo = algorithm
@@ -186,13 +186,21 @@ class Backtester:
 
         # load backtest data (multiple days combined)
 
-        self.order_data = pd.read_csv('data/tutorial/prices_combined.csv', header=0, sep=';')
+        self.iterations = 20000
+        if use_full:
+            prices_file = 'prices_combined'
+            trades_file = 'trades_combined'
+        else:
+            prices_file = 'prices_short'
+            trades_file = 'trades_short'
+            self.iterations = 2000
 
-        self.trades_data = pd.read_csv('data/tutorial/trades_combined.csv', header=0, sep=';')
+        self.order_data = pd.read_csv(f'data/tutorial/{prices_file}.csv', header=0, sep=';')
 
-        self.up_to = 2000000
-        self.order_data = self.order_data[self.order_data['timestamp'] < self.up_to]
-        self.trades_data = self.trades_data[self.trades_data['timestamp'] < self.up_to]
+        self.trades_data = pd.read_csv(f'data/tutorial/{trades_file}.csv', header=0, sep=';')
+
+
+
 
         # critical data logs
         self.trade_log = {p: [] for p in self.listings}
@@ -339,8 +347,7 @@ class Backtester:
 
 
     def run(self):
-        iterations = int(self.up_to / 100)
-        for i in range(iterations):
+        for i in range(self.iterations):
             self.step()
 
 
