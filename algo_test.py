@@ -87,7 +87,7 @@ class BaseProduct():
         # Taker Logic
 
         best_bid = max([x for x in order_depth.buy_orders])
-        best_ask = max([x for x in order_depth.buy_orders])
+        best_ask = min([x for x in order_depth.sell_orders])
 
         would_buy = False
         would_sell = False
