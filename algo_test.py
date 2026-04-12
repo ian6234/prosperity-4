@@ -82,7 +82,7 @@ class SingleProductStrategy(BaseStrategy):
         return buy_threshold, sell_threshold
 
     # taker logic
-    def taker_execution(self, position, fair_value, buy_threshold, sell_threshold, order_budgets, resting_book):
+    def taker_execution(self, position, fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book):
 
         product = self.symbol
 
@@ -146,6 +146,7 @@ class SingleProductStrategy(BaseStrategy):
                 #   print(f"BUY {product}", str(buy_quantity) + "x", last_ask)
                 orders.append(Order(product, last_ask, buy_quantity))
                 order_budgets[product]['buy'] -= buy_quantity
+                implied_positions[product] += buy_quantity
 
         elif would_sell:
             sell_quantity = 0
@@ -173,7 +174,7 @@ class SingleProductStrategy(BaseStrategy):
                 #    print(f"SELL {product}", str(-sell_quantity) + "x", last_bid)
                 orders.append(Order(product, last_bid, -sell_quantity))
                 order_budgets[product]['sell'] -= sell_quantity
-
+                implied_positions[product] += sell_quantity
         return orders
 
     # Maker Logic
@@ -227,7 +228,7 @@ class SingleProductStrategy(BaseStrategy):
         buy_threshold, sell_threshold = self.thresholds(position)
 
         # first taking execution on any orders
-        instant_orders = self.taker_execution(position, fair_value, buy_threshold, sell_threshold, order_budgets, resting_book)
+        instant_orders = self.taker_execution(position, fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book)
 
         # then making on the remaining book
         resting_orders = self.market_make(fair_value, order_budgets, resting_book)
@@ -273,17 +274,12 @@ class Trader:
         """Only method required. It takes all buy and sell orders for all
         symbols as an input, and outputs a list of orders to be sent."""
         # get new trader data
-        if state.timestamp == 0:
-
-            trader_data = {
-                "EMERALDS": {},
-                "TOMATOES": {
-                },
-                "debug": {},
-                "arb_positions": {}
-            }
-        else:
-            trader_data = jsonpickle.decode(state.traderData)
+        trader_data = jsonpickle.decode(state.traderData) if state.traderData else {
+            "EMERALDS": {},
+            "TOMATOES": {},
+            "debug": {},
+            "arb_positions": {}
+        }
 
         # set up position tracking
         pos_limits = {"EMERALDS": 80, "TOMATOES": 80}
