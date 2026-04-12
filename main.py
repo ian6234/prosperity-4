@@ -224,6 +224,7 @@ async def run_backtest(use_full: bool = Query(default=False)):
         total_profit += chart_data[product][-1]["profit"]
 
 
+
     return {"message":
             {
                 "total_profit": total_profit,
