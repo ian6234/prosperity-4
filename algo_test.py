@@ -82,9 +82,10 @@ class SingleProductStrategy(BaseStrategy):
         return buy_threshold, sell_threshold
 
     # taker logic
-    def taker_execution(self, position, fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book):
+    def taker_execution(self, fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book):
 
         product = self.symbol
+        position = implied_positions[product]
 
         orders = []
 
@@ -221,14 +222,14 @@ class SingleProductStrategy(BaseStrategy):
                  arb_positions: dict,
                  resting_book: dict):
 
-        position = implied_positions.get(self.symbol, 0)
+        implied_position = implied_positions.get(self.symbol, 0)
 
         fair_value = self.fair_value(state)
 
-        buy_threshold, sell_threshold = self.thresholds(position)
+        buy_threshold, sell_threshold = self.thresholds(implied_position)
 
         # first taking execution on any orders
-        instant_orders = self.taker_execution(position, fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book)
+        instant_orders = self.taker_execution(fair_value, buy_threshold, sell_threshold, order_budgets, implied_positions, resting_book)
 
         # then making on the remaining book
         resting_orders = self.market_make(fair_value, order_budgets, resting_book)
