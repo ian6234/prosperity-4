@@ -293,8 +293,10 @@ class Trader:
         for product in state.order_depths:
             # get positions and calculate order budgets
             raw_positions[product] = state.position.get(product, 0)
-            order_budgets[product]['buy'] = pos_limits[product] - raw_positions[product]
-            order_budgets[product]['sell'] = pos_limits[product] + raw_positions[product]
+            order_budgets[product] = {
+                'buy': pos_limits[product] - raw_positions[product],
+                'sell': pos_limits[product] + raw_positions[product]
+            }
 
             # create a mutable resting book
             resting_book[product] = {
@@ -314,7 +316,6 @@ class Trader:
         result = {}
 
         for strategy in strategies:
-            current_position = state.position.get(strategy.symbol, 0)
             result[strategy.symbol] = strategy.generate(state, implied_positions, order_budgets,
                                                         trader_data['arb_positions'], resting_book)
 
