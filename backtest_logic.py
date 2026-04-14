@@ -177,7 +177,7 @@ class Backtester:
 
         self.position_limits = {
             "INTARIAN_PEPPER_ROOT": 80,
-            "ASH_COATED_OSMIUM ": 80,
+            "ASH_COATED_OSMIUM": 80,
         }
         self.own_trades = {p: [] for p in self.listings}
         self.position = {p: 0 for p in self.listings}

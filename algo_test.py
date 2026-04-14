@@ -36,10 +36,12 @@ def true_mid(product, state: TradingState) -> float:
     bids = order_depth.buy_orders
     asks = order_depth.sell_orders
 
-    min_bid = min([x for x in bids])
-    max_ask = max([x for x in asks])
-
-    return (min_bid + max_ask) / 2
+    if bids and asks:
+        min_bid = min([x for x in bids])
+        max_ask = max([x for x in asks])
+        return (min_bid + max_ask) / 2
+    else:
+        return -1
 
 # the building block for every strategy, stores what products are traded on it and the book/position state being traded on.
 class BaseStrategy:
@@ -257,7 +259,61 @@ class PepperRoots(SingleProductStrategy):
         super().__init__(symbol, pos_limit)
 
     def fair_value(self, state: TradingState) -> float:
-        return 13000 + state.timestamp / 1000
+        return 10000 + state.timestamp / 1000
+
+    def thresholds(self, position: int):
+        # product has a drift so we want to go heavily long
+        target_position = 75
+        if position < target_position:
+            return -10, 999
+        # stop taking once desired position reached
+        elif position >= target_position:
+            return 999, 999
+        else:
+            return 0, 0
+
+    def edge(self) -> float:
+        # base edge for MM
+        return 5
+
+class PepperRootsHold(SingleProductStrategy):
+    def __init__(self, symbol: str, pos_limit: int):
+        super().__init__(symbol, pos_limit)
+
+    def fair_value(self, state: TradingState) -> float:
+        return 10000 + state.timestamp / 1000
+
+    def thresholds(self, position: int):
+        # product has a drift so we want to go heavily long
+        target_position = 80
+        if position < target_position:
+            return -10, 999
+        # stop taking once desired position reached
+        elif position >= target_position:
+            return 999, 999
+        else:
+            return 999, 999
+
+    def market_make(self, fair_value, order_budgets, resting_book):
+        return []
+
+class AshCoatedOsmium(SingleProductStrategy):
+
+    def __init__(self, symbol: str, pos_limit: int):
+        super().__init__(symbol, pos_limit)
+
+    # Ornstein-Uhlenbeck process (mean reversion)
+    def fair_value(self, state: TradingState) -> float:
+        long_run_mean = 10000
+        half_life = 24
+        theta = 1 - math.exp(-math.log(2) / half_life)
+
+        current_price = true_mid(self.symbol, state)
+        if current_price == -1:
+            return long_run_mean
+        next_price = current_price + theta * (long_run_mean - current_price)
+        return next_price
+
 
 class Trader:
 
@@ -298,7 +354,9 @@ class Trader:
 
         # create strategy objects
         strategies = [
-            PepperRoots("INTARIAN_PEPPER_ROOT", 80)
+            # PepperRoots("INTARIAN_PEPPER_ROOT", 80),
+            PepperRootsHold("INTARIAN_PEPPER_ROOT", 80),
+            AshCoatedOsmium("ASH_COATED_OSMIUM", 80)
         ]
 
         # Orders to be placed on exchange matching engine
