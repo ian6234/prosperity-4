@@ -99,16 +99,19 @@ class SingleProductStrategy(BaseStrategy):
         max_sell_qty = order_budgets[product]['sell']
 
         # Taker Logic
-
-        best_bid = max([x for x in remaining_bids])
-        best_ask = min([x for x in remaining_asks])
-
         would_buy = False
         would_sell = False
-        if best_ask + buy_threshold <= fair_value:
-            would_buy = True
-        if best_bid - sell_threshold >= fair_value:
-            would_sell = True
+
+        if remaining_bids:
+            best_bid = max([x for x in remaining_bids])
+            if best_bid - sell_threshold >= fair_value:
+                would_sell = True
+
+        if remaining_asks:
+            best_ask = min([x for x in remaining_asks])
+            if best_ask + buy_threshold <= fair_value:
+                would_buy = True
+
 
         if would_buy and would_sell:
             if position > 0:
@@ -254,7 +257,7 @@ class PepperRoots(SingleProductStrategy):
         super().__init__(symbol, pos_limit)
 
     def fair_value(self, state: TradingState) -> float:
-        return 10000 + state.timestamp / 1000
+        return 13000 + state.timestamp / 1000
 
 class Trader:
 

@@ -163,7 +163,7 @@ class Backtester:
         self.trader_data = ""
         # add all new products to listings and position limits.
         self.listings = {
-            "INTARIAN_PEPPER_ROOT ": Listing(
+            "INTARIAN_PEPPER_ROOT": Listing(
                 symbol="INTARIAN_PEPPER_ROOT",
                 product="INTARIAN_PEPPER_ROOT",
                 denomination= "XIRECS"
@@ -201,7 +201,6 @@ class Backtester:
 
 
 
-
         # critical data logs
         self.trade_log = {p: [] for p in self.listings}
         self.my_book_log = {p: [] for p in self.listings}
@@ -217,9 +216,9 @@ class Backtester:
         for product in self.listings:
             order_depth = OrderDepth()
             book_data = order_book_now[order_book_now['product'] == product]
-            bid_1 = int(book_data['bid_price_1'].iloc[0])
+            bid_1 = book_data['bid_price_1'].iloc[0]
             if not pd.isna(bid_1):
-                order_depth.buy_orders[bid_1] = int(book_data['bid_volume_1'].iloc[0])
+                order_depth.buy_orders[int(bid_1)] = int(book_data['bid_volume_1'].iloc[0])
 
             bid_2 = book_data['bid_price_2'].iloc[0]
             if not pd.isna(bid_2):
@@ -229,9 +228,9 @@ class Backtester:
             if not pd.isna(bid_3):
                 order_depth.buy_orders[int(bid_3)] = int(book_data['bid_volume_3'].iloc[0])
 
-            ask_1 = int(book_data['ask_price_1'].iloc[0])
+            ask_1 = book_data['ask_price_1'].iloc[0]
             if not pd.isna(ask_1):
-                order_depth.sell_orders[ask_1] = -int(book_data['ask_volume_1'].iloc[0])
+                order_depth.sell_orders[int(ask_1)] = -int(book_data['ask_volume_1'].iloc[0])
 
             ask_2 = book_data['ask_price_2'].iloc[0]
             if not pd.isna(ask_2):

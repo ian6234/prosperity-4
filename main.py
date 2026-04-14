@@ -6,6 +6,7 @@ from algo_test import Trader
 import json
 import io
 import csv
+import numpy as np
 
 app = FastAPI()
 
@@ -168,13 +169,17 @@ async def run_backtest(use_full: bool = Query(default=False)):
 
         # price history data
         for row in bt.order_data[bt.order_data['product'] == product].itertuples():
-            price_history[product].append({
-                "timestamp": row.timestamp,
-                "mid": row.mid_price,
-                "best_bid": row.bid_price_1,
-                "best_ask": row.ask_price_1,
-                "spread": row.ask_price_1-row.bid_price_1
-            })
+            best_bid = row.bid_price_1 if not np.isnan(row.bid_price_1) else None
+            best_ask = row.ask_price_1 if not np.isnan(row.ask_price_1) else None
+            spread = best_ask - best_bid if (best_ask is not None and best_bid is not None) else 0
+            if best_bid is not None and best_ask is not None:
+                price_history[product].append({
+                    "timestamp": row.timestamp,
+                    "mid": row.mid_price,
+                    "best_bid": best_bid,
+                    "best_ask": best_ask,
+                    "spread": spread
+                })
 
         # market trade history data
         for row in bt.trades_data[bt.trades_data['symbol'] == product].itertuples():
@@ -219,9 +224,19 @@ async def run_backtest(use_full: bool = Query(default=False)):
                 "profit": cash + position * float(mid_price.values[0]),
                 "position": position,
             })
+        final_ts = bt.timestamp - 100
+        final_mid = bt.order_data[bt.order_data['product'] == product]
+        final_mid = final_mid[final_mid['timestamp'] == int(final_ts)]['mid_price']
+        final_profit = cash + position * final_mid.values[0]
+        # log profit and position at end
+        chart_data[product].append({
+            "timestamp": final_ts,
+            "profit": final_profit,
+            "position": position,
+        })
 
-
-        total_profit += chart_data[product][-1]["profit"]
+        if chart_data[product]:
+            total_profit += chart_data[product][-1]["profit"]
 
 
 
