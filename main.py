@@ -30,7 +30,7 @@ async def say_hello(name: str):
 @app.get("/parse-log")
 async def parse_log():
 
-    position_limits = {"EMERALDS": 80, "TOMATOES": 80}
+    position_limits = {"INTARIAN_PEPPER_ROOT ": 80, "ASH_COATED_OSMIUM ": 80}
     with open("data/logs/13035.log") as f:
         data = json.load(f)
 

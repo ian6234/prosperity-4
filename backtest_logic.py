@@ -163,21 +163,21 @@ class Backtester:
         self.trader_data = ""
         # add all new products to listings and position limits.
         self.listings = {
-            "EMERALDS": Listing(
-                symbol="EMERALDS",
-                product="EMERALDS",
+            "INTARIAN_PEPPER_ROOT ": Listing(
+                symbol="INTARIAN_PEPPER_ROOT",
+                product="INTARIAN_PEPPER_ROOT",
                 denomination= "XIRECS"
             ),
-            "TOMATOES": Listing(
-                symbol="TOMATOES",
-                product="TOMATOES",
+            "ASH_COATED_OSMIUM": Listing(
+                symbol="ASH_COATED_OSMIUM",
+                product="ASH_COATED_OSMIUM",
                 denomination= "XIRECS"
             ),
             }
 
         self.position_limits = {
-            "EMERALDS": 80,
-            "TOMATOES": 80,
+            "INTARIAN_PEPPER_ROOT": 80,
+            "ASH_COATED_OSMIUM ": 80,
         }
         self.own_trades = {p: [] for p in self.listings}
         self.position = {p: 0 for p in self.listings}
@@ -186,7 +186,7 @@ class Backtester:
 
         # load backtest data (multiple days combined)
 
-        self.iterations = 20000
+        self.iterations = 30000
         if use_full:
             prices_file = 'prices_combined'
             trades_file = 'trades_combined'
@@ -195,9 +195,9 @@ class Backtester:
             trades_file = 'trades_short'
             self.iterations = 2000
 
-        self.order_data = pd.read_csv(f'data/tutorial/{prices_file}.csv', header=0, sep=';')
+        self.order_data = pd.read_csv(f'data/round1/{prices_file}.csv', header=0, sep=';')
 
-        self.trades_data = pd.read_csv(f'data/tutorial/{trades_file}.csv', header=0, sep=';')
+        self.trades_data = pd.read_csv(f'data/round1/{trades_file}.csv', header=0, sep=';')
 
 
 
@@ -218,7 +218,8 @@ class Backtester:
             order_depth = OrderDepth()
             book_data = order_book_now[order_book_now['product'] == product]
             bid_1 = int(book_data['bid_price_1'].iloc[0])
-            order_depth.buy_orders[bid_1] = int(book_data['bid_volume_1'].iloc[0])
+            if not pd.isna(bid_1):
+                order_depth.buy_orders[bid_1] = int(book_data['bid_volume_1'].iloc[0])
 
             bid_2 = book_data['bid_price_2'].iloc[0]
             if not pd.isna(bid_2):
@@ -229,7 +230,8 @@ class Backtester:
                 order_depth.buy_orders[int(bid_3)] = int(book_data['bid_volume_3'].iloc[0])
 
             ask_1 = int(book_data['ask_price_1'].iloc[0])
-            order_depth.sell_orders[ask_1] = -int(book_data['ask_volume_1'].iloc[0])
+            if not pd.isna(ask_1):
+                order_depth.sell_orders[ask_1] = -int(book_data['ask_volume_1'].iloc[0])
 
             ask_2 = book_data['ask_price_2'].iloc[0]
             if not pd.isna(ask_2):

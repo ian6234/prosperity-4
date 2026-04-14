@@ -248,23 +248,13 @@ class MultiProductStrategy(BaseStrategy):
 
 # Single Product Strategies
 
-class Emeralds(SingleProductStrategy):
+
+class PepperRoots(SingleProductStrategy):
     def __init__(self, symbol: str, pos_limit: int):
         super().__init__(symbol, pos_limit)
 
     def fair_value(self, state: TradingState) -> float:
-        return 10000
-
-
-class Tomatoes(SingleProductStrategy):
-    def __init__(self, symbol: str, pos_limit: int):
-        super().__init__(symbol, pos_limit)
-        self.max_threshold = 2
-
-    def fair_value(self, state: TradingState) -> float:
-        return true_mid(self.symbol, state)
-
-
+        return 10000 + state.timestamp / 1000
 
 class Trader:
 
@@ -276,14 +266,14 @@ class Trader:
         symbols as an input, and outputs a list of orders to be sent."""
         # get new trader data
         trader_data = jsonpickle.decode(state.traderData) if state.traderData else {
-            "EMERALDS": {},
-            "TOMATOES": {},
+            "INTARIAN_PEPPER_ROOT": {},
+            "ASH_COATED_OSMIUM": {},
             "debug": {},
             "arb_positions": {}
         }
 
         # set up position tracking
-        pos_limits = {"EMERALDS": 80, "TOMATOES": 80}
+        pos_limits = {"INTARIAN_PEPPER_ROOT": 80, "ASH_COATED_OSMIUM": 80}
         raw_positions = {}
         order_budgets = {}
         resting_book = {}
@@ -305,8 +295,7 @@ class Trader:
 
         # create strategy objects
         strategies = [
-            Emeralds("EMERALDS", 80),
-            Tomatoes("TOMATOES", 80),
+            PepperRoots("INTARIAN_PEPPER_ROOT", 80)
         ]
 
         # Orders to be placed on exchange matching engine
