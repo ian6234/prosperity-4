@@ -32,7 +32,9 @@ def volume_weighted_mid(product, state: TradingState) -> float:
 
 # tries to find the 'true' mid by using the mid of the deepest bid/ask
 def true_mid(product, state: TradingState) -> float:
-    order_depth = state.order_depths[product]
+    order_depth = state.order_depths.get(product, -1)
+    if order_depth == -1:
+        return -1
     bids = order_depth.buy_orders
     asks = order_depth.sell_orders
 
@@ -42,6 +44,28 @@ def true_mid(product, state: TradingState) -> float:
         return (min_bid + max_ask) / 2
     else:
         return -1
+
+# returns top of book mid price
+def top_mid(product, state: TradingState) -> float:
+    order_depth = state.order_depths.get(product, -1)
+    if order_depth == -1:
+        return -1
+    bids = order_depth.buy_orders
+    asks = order_depth.sell_orders
+
+    if bids and asks:
+        best_bid = max([x for x in bids])
+        best_ask = min([x for x in asks])
+        return (best_bid + best_ask) / 2
+    else:
+        return -1
+
+def simple_moving_average(prices):
+    return sum(prices)/len(prices)
+
+def exp_moving_average(last_price, last_ema, timespan) -> float:
+    ema = last_price * 2/(1+timespan) + last_ema * (1 - (2/(1+timespan)))
+    return ema
 
 # the building block for every strategy, stores what products are traded on it and the book/position state being traded on.
 class BaseStrategy:
@@ -254,65 +278,43 @@ class MultiProductStrategy(BaseStrategy):
 # Single Product Strategies
 
 
-class PepperRoots(SingleProductStrategy):
-    def __init__(self, symbol: str, pos_limit: int):
-        super().__init__(symbol, pos_limit)
-
-    def fair_value(self, state: TradingState) -> float:
-        return 10000 + state.timestamp / 1000
-
-    def thresholds(self, position: int):
-        # product has a drift so we want to go heavily long
-        target_position = 75
-        if position < target_position:
-            return -10, 999
-        # stop taking once desired position reached
-        elif position >= target_position:
-            return 999, 999
-        else:
-            return 0, 0
-
-    def edge(self) -> float:
-        # base edge for MM
-        return 5
-
 class PepperRootsHold(SingleProductStrategy):
     def __init__(self, symbol: str, pos_limit: int):
         super().__init__(symbol, pos_limit)
 
     def fair_value(self, state: TradingState) -> float:
-        return 10000 + state.timestamp / 1000
+        # UPDATE THIS EVERY ROUND: 13000 for round 1, +1000 for round 2, ...
+        base_fair = 13000
+        return base_fair + state.timestamp / 1000
 
     def thresholds(self, position: int):
         # product has a drift so we want to go heavily long
         target_position = 80
         if position < target_position:
-            return -10, 999
+            return -10, 9999
         # stop taking once desired position reached
         elif position >= target_position:
-            return 999, 999
+            return 9999, 9999
         else:
-            return 999, 999
+            return 9999, 9999
 
     def market_make(self, fair_value, order_budgets, resting_book):
         return []
 
-class AshCoatedOsmium(SingleProductStrategy):
+
+class AshCoatedOsmiumRandom(SingleProductStrategy):
 
     def __init__(self, symbol: str, pos_limit: int):
         super().__init__(symbol, pos_limit)
+        self.max_threshold = 1
 
-    # Ornstein-Uhlenbeck process (mean reversion)
+    # AR(1) fair value
     def fair_value(self, state: TradingState) -> float:
         long_run_mean = 10000
-        half_life = 24
-        theta = 1 - math.exp(-math.log(2) / half_life)
-
         current_price = true_mid(self.symbol, state)
         if current_price == -1:
             return long_run_mean
-        next_price = current_price + theta * (long_run_mean - current_price)
-        return next_price
+        return current_price
 
 
 class Trader:
@@ -326,17 +328,23 @@ class Trader:
         # get new trader data
         trader_data = jsonpickle.decode(state.traderData) if state.traderData else {
             "INTARIAN_PEPPER_ROOT": {},
-            "ASH_COATED_OSMIUM": {},
+            "ASH_COATED_OSMIUM": {
+                'mid_price': [],
+                'last_ema': -1
+            },
             "debug": {},
             "arb_positions": {}
         }
+
+        # make sure traderdata is up to date
+        state.traderData = trader_data
 
         # set up position tracking
         pos_limits = {"INTARIAN_PEPPER_ROOT": 80, "ASH_COATED_OSMIUM": 80}
         raw_positions = {}
         order_budgets = {}
         resting_book = {}
-        for product in state.order_depths:
+        for product in pos_limits:
             # get positions and calculate order budgets
             raw_positions[product] = state.position.get(product, 0)
             order_budgets[product] = {
@@ -344,19 +352,23 @@ class Trader:
                 'sell': pos_limits[product] + raw_positions[product]
             }
 
+            order_depth = state.order_depths.get(product, -1)
             # create a mutable resting book
-            resting_book[product] = {
-                "bids": dict(state.order_depths[product].buy_orders),
-                "asks": dict(state.order_depths[product].sell_orders),
-            }
+            if order_depth != -1:
+                resting_book[product] = {
+                    "bids": dict(order_depth.buy_orders),
+                    "asks": dict(order_depth.sell_orders),
+                }
+            else:
+                resting_book[product] = {"bids": {}, "asks": {}}
+
 
         implied_positions = dict(raw_positions)
 
         # create strategy objects
         strategies = [
-            # PepperRoots("INTARIAN_PEPPER_ROOT", 80),
             PepperRootsHold("INTARIAN_PEPPER_ROOT", 80),
-            AshCoatedOsmium("ASH_COATED_OSMIUM", 80)
+            AshCoatedOsmiumRandom("ASH_COATED_OSMIUM", 80)
         ]
 
         # Orders to be placed on exchange matching engine

@@ -31,8 +31,8 @@ async def say_hello(name: str):
 @app.get("/parse-log")
 async def parse_log():
 
-    position_limits = {"INTARIAN_PEPPER_ROOT ": 80, "ASH_COATED_OSMIUM ": 80}
-    with open("data/logs/13035.log") as f:
+    position_limits = {"INTARIAN_PEPPER_ROOT": 80, "ASH_COATED_OSMIUM": 80}
+    with open("data/logs/128121.log") as f:
         data = json.load(f)
 
     # Parse activitiesLog CSV
@@ -54,13 +54,14 @@ async def parse_log():
 
         mid_by_product_ts[(product, ts)] = mid
 
-        price_history[product].append({
-            "timestamp": ts,
-            "mid": mid,
-            "best_bid": best_bid,
-            "best_ask": best_ask,
-            "spread": (best_ask - best_bid) if best_bid and best_ask else None
-        })
+        if best_bid is not None and best_ask is not None:
+            price_history[product].append({
+                "timestamp": ts,
+                "mid": mid,
+                "best_bid": best_bid,
+                "best_ask": best_ask,
+                "spread": (best_ask - best_bid) if best_bid and best_ask else None
+            })
 
         def parse_level(price_key, vol_key):
             return (int(row[price_key]), int(row[vol_key])) if row[price_key] and row[vol_key] else None
