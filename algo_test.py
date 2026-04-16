@@ -310,10 +310,9 @@ class AshCoatedOsmiumRandom(SingleProductStrategy):
 
     # AR(1) fair value
     def fair_value(self, state: TradingState) -> float:
-        long_run_mean = 10000
         current_price = true_mid(self.symbol, state)
         if current_price == -1:
-            return long_run_mean
+            return float(state.traderData['ASH_COATED_OSMIUM']['last_mid'])
         return current_price
 
 
@@ -329,12 +328,15 @@ class Trader:
         trader_data = jsonpickle.decode(state.traderData) if state.traderData else {
             "INTARIAN_PEPPER_ROOT": {},
             "ASH_COATED_OSMIUM": {
-                'mid_price': [],
-                'last_ema': -1
+                'last_mid': 10000
             },
             "debug": {},
             "arb_positions": {}
         }
+        # track last osmium mid-price so we don't lose it
+        osmium_mid = true_mid('ASH_COATED_OSMIUM', state)
+        if osmium_mid != -1:
+            trader_data['ASH_COATED_OSMIUM']['last_mid'] = osmium_mid
 
         # make sure traderdata is up to date
         state.traderData = trader_data
