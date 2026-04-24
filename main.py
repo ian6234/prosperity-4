@@ -31,8 +31,10 @@ async def say_hello(name: str):
 @app.get("/parse-log")
 async def parse_log():
 
-    position_limits = {"INTARIAN_PEPPER_ROOT": 80, "ASH_COATED_OSMIUM": 80}
-    with open("data/logs/128121.log") as f:
+    position_limits = {"HYDROGEL_PACK": 200, "VELVETFRUIT_EXTRACT": 200,
+                       "VEV_4000": 300, "VEV_4500": 300, "VEV_5000": 300, "VEV_5100": 300, "VEV_5200": 300,
+                       "VEV_5300": 300, "VEV_5400": 300, "VEV_5500": 300, "VEV_6000": 300, "VEV_6500": 300 }
+    with open("data/logs/371981.log") as f:
         data = json.load(f)
 
     # Parse activitiesLog CSV
@@ -195,9 +197,11 @@ async def run_backtest(use_full: bool = Query(default=False)):
         # own trades data
         position = 0
         cash = 0
-        for trade_batch in bt.trade_log[product]:
+        ts_seen = {}  # track position/cash state at each timestamp
 
-            timestamp = trade_batch['timestamp']
+        for trade_batch in bt.trade_log[product]:
+            timestamp = int(trade_batch['timestamp'])
+
             for trade in trade_batch['trades']:
                 side = "SELL"
                 if trade.buyer == "SUBMISSION":
@@ -208,7 +212,6 @@ async def run_backtest(use_full: bool = Query(default=False)):
                     position -= trade.quantity
                     cash += trade.quantity * trade.price
 
-                # log every trade for the order book separately
                 own_trades[product].append({
                     "timestamp": int(trade.timestamp),
                     "price": trade.price,
@@ -216,29 +219,26 @@ async def run_backtest(use_full: bool = Query(default=False)):
                     "side": side
                 })
 
-            mid_price = bt.order_data[bt.order_data['product'] == product]
-            mid_price = mid_price[mid_price['timestamp'] == int(timestamp)]['mid_price']
+            # update state at this timestamp - overwrite if seen before
+            ts_seen[timestamp] = (position, cash)
 
-            # only log profit and position once per batch of trades.
+        # now build chart_data with one entry per unique timestamp, in order
+        for ts in sorted(ts_seen.keys()):
+            pos, csh = ts_seen[ts]
+            mid_price = bt.order_data[bt.order_data['product'] == product]
+            mid_price = mid_price[mid_price['timestamp'] == ts]['mid_price']
+            if len(mid_price) == 0:
+                continue
             chart_data[product].append({
-                "timestamp": int(timestamp),
-                "profit": cash + position * float(mid_price.values[0]),
-                "position": position,
+                "timestamp": ts,
+                "profit": csh + pos * float(mid_price.values[0]),
+                "position": pos,
             })
-        final_ts = bt.timestamp - 100
-        final_mid = bt.order_data[bt.order_data['product'] == product]
-        final_mid = final_mid[final_mid['timestamp'] == int(final_ts)]['mid_price']
-        final_profit = cash + position * final_mid.values[0]
-        # log profit and position at end
-        chart_data[product].append({
-            "timestamp": final_ts,
-            "profit": final_profit,
-            "position": position,
-        })
+
+        # remove the final_ts append entirely - it causes a duplicate
 
         if chart_data[product]:
             total_profit += chart_data[product][-1]["profit"]
-
 
 
     return {"message":

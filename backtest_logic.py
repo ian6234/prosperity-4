@@ -163,22 +163,73 @@ class Backtester:
         self.trader_data = ""
         # add all new products to listings and position limits.
         self.listings = {
-            "INTARIAN_PEPPER_ROOT": Listing(
-                symbol="INTARIAN_PEPPER_ROOT",
-                product="INTARIAN_PEPPER_ROOT",
+            "HYDROGEL_PACK": Listing(
+                symbol="HYDROGEL_PACK",
+                product="HYDROGEL_PACK",
                 denomination= "XIRECS"
             ),
-            "ASH_COATED_OSMIUM": Listing(
-                symbol="ASH_COATED_OSMIUM",
-                product="ASH_COATED_OSMIUM",
+            "VELVETFRUIT_EXTRACT": Listing(
+                symbol="VELVETFRUIT_EXTRACT",
+                product="VELVETFRUIT_EXTRACT",
                 denomination= "XIRECS"
             ),
+            "VEV_4000": Listing(
+                symbol="VEV_4000",
+                product="VEV_4000",
+                denomination="XIRECS"
+            ),
+            "VEV_4500": Listing(
+                symbol="VEV_4500",
+                product="VEV_4500",
+                denomination="XIRECS"
+            ),
+            "VEV_5000": Listing(
+                symbol="VEV_5000",
+                product="VEV_5000",
+                denomination="XIRECS"
+            ),
+            "VEV_5100": Listing(
+                symbol="VEV_5100",
+                product="VEV_5100",
+                denomination="XIRECS"
+            ),
+            "VEV_5200": Listing(
+                symbol="VEV_5200",
+                product="VEV_5200",
+                denomination="XIRECS"
+            ),
+            "VEV_5300": Listing(
+                symbol="VEV_5300",
+                product="VEV_5300",
+                denomination="XIRECS"
+            ),
+            "VEV_5400": Listing(
+                symbol="VEV_5400",
+                product="VEV_5400",
+                denomination="XIRECS"
+            ),
+            "VEV_5500": Listing(
+                symbol="VEV_5500",
+                product="VEV_5500",
+                denomination="XIRECS"
+            ),
+            "VEV_6000": Listing(
+                symbol="VEV_6000",
+                product="VEV_6000",
+                denomination="XIRECS"
+            ),
+            "VEV_6500": Listing(
+                symbol="VEV_6500",
+                product="VEV_6500",
+                denomination="XIRECS"
+            ),
+
+
             }
 
-        self.position_limits = {
-            "INTARIAN_PEPPER_ROOT": 80,
-            "ASH_COATED_OSMIUM": 80,
-        }
+        self.position_limits = {"HYDROGEL_PACK": 200, "VELVETFRUIT_EXTRACT": 200,
+                       "VEV_4000": 300, "VEV_4500": 300, "VEV_5000": 300, "VEV_5100": 300, "VEV_5200": 300,
+                       "VEV_5300": 300, "VEV_5400": 300, "VEV_5500": 300, "VEV_6000": 300, "VEV_6500": 300 }
         self.own_trades = {p: [] for p in self.listings}
         self.position = {p: 0 for p in self.listings}
 
@@ -195,9 +246,9 @@ class Backtester:
             trades_file = 'trades_short'
             self.iterations = 2000
 
-        self.order_data = pd.read_csv(f'data/round1/{prices_file}.csv', header=0, sep=';')
+        self.order_data = pd.read_csv(f'data/round3/{prices_file}.csv', header=0, sep=';')
 
-        self.trades_data = pd.read_csv(f'data/round1/{trades_file}.csv', header=0, sep=';')
+        self.trades_data = pd.read_csv(f'data/round3/{trades_file}.csv', header=0, sep=';')
 
 
 
