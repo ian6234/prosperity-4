@@ -163,73 +163,310 @@ class Backtester:
         self.trader_data = ""
         # add all new products to listings and position limits.
         self.listings = {
-            "HYDROGEL_PACK": Listing(
-                symbol="HYDROGEL_PACK",
-                product="HYDROGEL_PACK",
-                denomination= "XIRECS"
-            ),
-            "VELVETFRUIT_EXTRACT": Listing(
-                symbol="VELVETFRUIT_EXTRACT",
-                product="VELVETFRUIT_EXTRACT",
-                denomination= "XIRECS"
-            ),
-            "VEV_4000": Listing(
-                symbol="VEV_4000",
-                product="VEV_4000",
+            "GALAXY_SOUNDS_DARK_MATTER": Listing(
+                symbol="GALAXY_SOUNDS_DARK_MATTER",
+                product="GALAXY_SOUNDS_DARK_MATTER",
                 denomination="XIRECS"
             ),
-            "VEV_4500": Listing(
-                symbol="VEV_4500",
-                product="VEV_4500",
+            "GALAXY_SOUNDS_BLACK_HOLES": Listing(
+                symbol="GALAXY_SOUNDS_BLACK_HOLES",
+                product="GALAXY_SOUNDS_BLACK_HOLES",
                 denomination="XIRECS"
             ),
-            "VEV_5000": Listing(
-                symbol="VEV_5000",
-                product="VEV_5000",
+            "GALAXY_SOUNDS_PLANETARY_RINGS": Listing(
+                symbol="GALAXY_SOUNDS_PLANETARY_RINGS",
+                product="GALAXY_SOUNDS_PLANETARY_RINGS",
                 denomination="XIRECS"
             ),
-            "VEV_5100": Listing(
-                symbol="VEV_5100",
-                product="VEV_5100",
+            "GALAXY_SOUNDS_SOLAR_WINDS": Listing(
+                symbol="GALAXY_SOUNDS_SOLAR_WINDS",
+                product="GALAXY_SOUNDS_SOLAR_WINDS",
                 denomination="XIRECS"
             ),
-            "VEV_5200": Listing(
-                symbol="VEV_5200",
-                product="VEV_5200",
+            "GALAXY_SOUNDS_SOLAR_FLAMES": Listing(
+                symbol="GALAXY_SOUNDS_SOLAR_FLAMES",
+                product="GALAXY_SOUNDS_SOLAR_FLAMES",
                 denomination="XIRECS"
             ),
-            "VEV_5300": Listing(
-                symbol="VEV_5300",
-                product="VEV_5300",
+            "SLEEP_POD_SUEDE": Listing(
+                symbol="SLEEP_POD_SUEDE",
+                product="SLEEP_POD_SUEDE",
                 denomination="XIRECS"
             ),
-            "VEV_5400": Listing(
-                symbol="VEV_5400",
-                product="VEV_5400",
+            "SLEEP_POD_LAMB_WOOL": Listing(
+                symbol="SLEEP_POD_LAMB_WOOL",
+                product="SLEEP_POD_LAMB_WOOL",
                 denomination="XIRECS"
             ),
-            "VEV_5500": Listing(
-                symbol="VEV_5500",
-                product="VEV_5500",
+            "SLEEP_POD_POLYESTER": Listing(
+                symbol="SLEEP_POD_POLYESTER",
+                product="SLEEP_POD_POLYESTER",
                 denomination="XIRECS"
             ),
-            "VEV_6000": Listing(
-                symbol="VEV_6000",
-                product="VEV_6000",
+            "SLEEP_POD_NYLON": Listing(
+                symbol="SLEEP_POD_NYLON",
+                product="SLEEP_POD_NYLON",
                 denomination="XIRECS"
             ),
-            "VEV_6500": Listing(
-                symbol="VEV_6500",
-                product="VEV_6500",
+            "SLEEP_POD_COTTON": Listing(
+                symbol="SLEEP_POD_COTTON",
+                product="SLEEP_POD_COTTON",
                 denomination="XIRECS"
             ),
+            "MICROCHIP_CIRCLE": Listing(
+                symbol="MICROCHIP_CIRCLE",
+                product="MICROCHIP_CIRCLE",
+                denomination="XIRECS"
+            ),
+            "MICROCHIP_OVAL": Listing(
+                symbol="MICROCHIP_OVAL",
+                product="MICROCHIP_OVAL",
+                denomination="XIRECS"
+            ),
+            "MICROCHIP_SQUARE": Listing(
+                symbol="MICROCHIP_SQUARE",
+                product="MICROCHIP_SQUARE",
+                denomination="XIRECS"
+            ),
+            "MICROCHIP_RECTANGLE": Listing(
+                symbol="MICROCHIP_RECTANGLE",
+                product="MICROCHIP_RECTANGLE",
+                denomination="XIRECS"
+            ),
+            "MICROCHIP_TRIANGLE": Listing(
+                symbol="MICROCHIP_TRIANGLE",
+                product="MICROCHIP_TRIANGLE",
+                denomination="XIRECS"
+            ),
+            "PEBBLES_XS": Listing(
+                symbol="PEBBLES_XS",
+                product="PEBBLES_XS",
+                denomination="XIRECS"
+            ),
+            "PEBBLES_S": Listing(
+                symbol="PEBBLES_S",
+                product="PEBBLES_S",
+                denomination="XIRECS"
+            ),
+            "PEBBLES_M": Listing(
+                symbol="PEBBLES_M",
+                product="PEBBLES_M",
+                denomination="XIRECS"
+            ),
+            "PEBBLES_L": Listing(
+                symbol="PEBBLES_L",
+                product="PEBBLES_L",
+                denomination="XIRECS"
+            ),
+            "PEBBLES_XL": Listing(
+                symbol="PEBBLES_XL",
+                product="PEBBLES_XL",
+                denomination="XIRECS"
+            ),
+            "ROBOT_VACUUMING": Listing(
+                symbol="ROBOT_VACUUMING",
+                product="ROBOT_VACUUMING",
+                denomination="XIRECS"
+            ),
+            "ROBOT_MOPPING": Listing(
+                symbol="ROBOT_MOPPING",
+                product="ROBOT_MOPPING",
+                denomination="XIRECS"
+            ),
+            "ROBOT_DISHES": Listing(
+                symbol="ROBOT_DISHES",
+                product="ROBOT_DISHES",
+                denomination="XIRECS"
+            ),
+            "ROBOT_LAUNDRY": Listing(
+                symbol="ROBOT_LAUNDRY",
+                product="ROBOT_LAUNDRY",
+                denomination="XIRECS"
+            ),
+            "ROBOT_IRONING": Listing(
+                symbol="ROBOT_IRONING",
+                product="ROBOT_IRONING",
+                denomination="XIRECS"
+            ),
+            "UV_VISOR_YELLOW": Listing(
+                symbol="UV_VISOR_YELLOW",
+                product="UV_VISOR_YELLOW",
+                denomination="XIRECS"
+            ),
+            "UV_VISOR_AMBER": Listing(
+                symbol="UV_VISOR_AMBER",
+                product="UV_VISOR_AMBER",
+                denomination="XIRECS"
+            ),
+            "UV_VISOR_ORANGE": Listing(
+                symbol="UV_VISOR_ORANGE",
+                product="UV_VISOR_ORANGE",
+                denomination="XIRECS"
+            ),
+            "UV_VISOR_RED": Listing(
+                symbol="UV_VISOR_RED",
+                product="UV_VISOR_RED",
+                denomination="XIRECS"
+            ),
+            "UV_VISOR_MAGENTA": Listing(
+                symbol="UV_VISOR_MAGENTA",
+                product="UV_VISOR_MAGENTA",
+                denomination="XIRECS"
+            ),
+            "TRANSLATOR_SPACE_GRAY": Listing(
+                symbol="TRANSLATOR_SPACE_GRAY",
+                product="TRANSLATOR_SPACE_GRAY",
+                denomination="XIRECS"
+            ),
+            "TRANSLATOR_ASTRO_BLACK": Listing(
+                symbol="TRANSLATOR_ASTRO_BLACK",
+                product="TRANSLATOR_ASTRO_BLACK",
+                denomination="XIRECS"
+            ),
+            "TRANSLATOR_ECLIPSE_CHARCOAL": Listing(
+                symbol="TRANSLATOR_ECLIPSE_CHARCOAL",
+                product="TRANSLATOR_ECLIPSE_CHARCOAL",
+                denomination="XIRECS"
+            ),
+            "TRANSLATOR_GRAPHITE_MIST": Listing(
+                symbol="TRANSLATOR_GRAPHITE_MIST",
+                product="TRANSLATOR_GRAPHITE_MIST",
+                denomination="XIRECS"
+            ),
+            "TRANSLATOR_VOID_BLUE": Listing(
+                symbol="TRANSLATOR_VOID_BLUE",
+                product="TRANSLATOR_VOID_BLUE",
+                denomination="XIRECS"
+            ),
+            "PANEL_1X2": Listing(
+                symbol="PANEL_1X2",
+                product="PANEL_1X2",
+                denomination="XIRECS"
+            ),
+            "PANEL_2X2": Listing(
+                symbol="PANEL_2X2",
+                product="PANEL_2X2",
+                denomination="XIRECS"
+            ),
+            "PANEL_1X4": Listing(
+                symbol="PANEL_1X4",
+                product="PANEL_1X4",
+                denomination="XIRECS"
+            ),
+            "PANEL_2X4": Listing(
+                symbol="PANEL_2X4",
+                product="PANEL_2X4",
+                denomination="XIRECS"
+            ),
+            "PANEL_4X4": Listing(
+                symbol="PANEL_4X4",
+                product="PANEL_4X4",
+                denomination="XIRECS"
+            ),
+            "OXYGEN_SHAKE_MORNING_BREATH": Listing(
+                symbol="OXYGEN_SHAKE_MORNING_BREATH",
+                product="OXYGEN_SHAKE_MORNING_BREATH",
+                denomination="XIRECS"
+            ),
+            "OXYGEN_SHAKE_EVENING_BREATH": Listing(
+                symbol="OXYGEN_SHAKE_EVENING_BREATH",
+                product="OXYGEN_SHAKE_EVENING_BREATH",
+                denomination="XIRECS"
+            ),
+            "OXYGEN_SHAKE_MINT": Listing(
+                symbol="OXYGEN_SHAKE_MINT",
+                product="OXYGEN_SHAKE_MINT",
+                denomination="XIRECS"
+            ),
+            "OXYGEN_SHAKE_CHOCOLATE": Listing(
+                symbol="OXYGEN_SHAKE_CHOCOLATE",
+                product="OXYGEN_SHAKE_CHOCOLATE",
+                denomination="XIRECS"
+            ),
+            "OXYGEN_SHAKE_GARLIC": Listing(
+                symbol="OXYGEN_SHAKE_GARLIC",
+                product="OXYGEN_SHAKE_GARLIC",
+                denomination="XIRECS"
+            ),
+            "SNACKPACK_CHOCOLATE": Listing(
+                symbol="SNACKPACK_CHOCOLATE",
+                product="SNACKPACK_CHOCOLATE",
+                denomination="XIRECS"
+            ),
+            "SNACKPACK_VANILLA": Listing(
+                symbol="SNACKPACK_VANILLA",
+                product="SNACKPACK_VANILLA",
+                denomination="XIRECS"
+            ),
+            "SNACKPACK_PISTACHIO": Listing(
+                symbol="SNACKPACK_PISTACHIO",
+                product="SNACKPACK_PISTACHIO",
+                denomination="XIRECS"
+            ),
+            "SNACKPACK_STRAWBERRY": Listing(
+                symbol="SNACKPACK_STRAWBERRY",
+                product="SNACKPACK_STRAWBERRY",
+                denomination="XIRECS"
+            ),
+            "SNACKPACK_RASPBERRY": Listing(
+                symbol="SNACKPACK_RASPBERRY",
+                product="SNACKPACK_RASPBERRY",
+                denomination="XIRECS"
+            ),
+        }
 
-
-            }
-
-        self.position_limits = {"HYDROGEL_PACK": 200, "VELVETFRUIT_EXTRACT": 200,
-                       "VEV_4000": 300, "VEV_4500": 300, "VEV_5000": 300, "VEV_5100": 300, "VEV_5200": 300,
-                       "VEV_5300": 300, "VEV_5400": 300, "VEV_5500": 300, "VEV_6000": 300, "VEV_6500": 300 }
+        self.position_limits = {
+        "GALAXY_SOUNDS_DARK_MATTER": 10,
+        "GALAXY_SOUNDS_BLACK_HOLES": 10,
+        "GALAXY_SOUNDS_PLANETARY_RINGS": 10,
+        "GALAXY_SOUNDS_SOLAR_WINDS": 10,
+        "GALAXY_SOUNDS_SOLAR_FLAMES": 10,
+        "SLEEP_POD_SUEDE": 10,
+        "SLEEP_POD_LAMB_WOOL": 10,
+        "SLEEP_POD_POLYESTER": 10,
+        "SLEEP_POD_NYLON": 10,
+        "SLEEP_POD_COTTON": 10,
+        "MICROCHIP_CIRCLE": 10,
+        "MICROCHIP_OVAL": 10,
+        "MICROCHIP_SQUARE": 10,
+        "MICROCHIP_RECTANGLE": 10,
+        "MICROCHIP_TRIANGLE": 10,
+        "PEBBLES_XS": 10,
+        "PEBBLES_S": 10,
+        "PEBBLES_M": 10,
+        "PEBBLES_L": 10,
+        "PEBBLES_XL": 10,
+        "ROBOT_VACUUMING": 10,
+        "ROBOT_MOPPING": 10,
+        "ROBOT_DISHES": 10,
+        "ROBOT_LAUNDRY": 10,
+        "ROBOT_IRONING": 10,
+        "UV_VISOR_YELLOW": 10,
+        "UV_VISOR_AMBER": 10,
+        "UV_VISOR_ORANGE": 10,
+        "UV_VISOR_RED": 10,
+        "UV_VISOR_MAGENTA": 10,
+        "TRANSLATOR_SPACE_GRAY": 10,
+        "TRANSLATOR_ASTRO_BLACK": 10,
+        "TRANSLATOR_ECLIPSE_CHARCOAL": 10,
+        "TRANSLATOR_GRAPHITE_MIST": 10,
+        "TRANSLATOR_VOID_BLUE": 10,
+        "PANEL_1X2": 10,
+        "PANEL_2X2": 10,
+        "PANEL_1X4": 10,
+        "PANEL_2X4": 10,
+        "PANEL_4X4": 10,
+        "OXYGEN_SHAKE_MORNING_BREATH": 10,
+        "OXYGEN_SHAKE_EVENING_BREATH": 10,
+        "OXYGEN_SHAKE_MINT": 10,
+        "OXYGEN_SHAKE_CHOCOLATE": 10,
+        "OXYGEN_SHAKE_GARLIC": 10,
+        "SNACKPACK_CHOCOLATE": 10,
+        "SNACKPACK_VANILLA": 10,
+        "SNACKPACK_PISTACHIO": 10,
+        "SNACKPACK_STRAWBERRY": 10,
+        "SNACKPACK_RASPBERRY": 10,
+        }
         self.own_trades = {p: [] for p in self.listings}
         self.position = {p: 0 for p in self.listings}
 
@@ -246,9 +483,9 @@ class Backtester:
             trades_file = 'trades_short'
             self.iterations = 2000
 
-        self.order_data = pd.read_csv(f'data/round3/{prices_file}.csv', header=0, sep=';')
+        self.order_data = pd.read_csv(f'data/round5/{prices_file}.csv', header=0, sep=';')
 
-        self.trades_data = pd.read_csv(f'data/round3/{trades_file}.csv', header=0, sep=';')
+        self.trades_data = pd.read_csv(f'data/round5/{trades_file}.csv', header=0, sep=';')
 
 
 
@@ -294,6 +531,13 @@ class Backtester:
             order_depths[product] = order_depth
 
         market_trades = {p: [] for p in self.listings}
+
+        if self.timestamp >= 100:
+            trades_yesterday = self.trades_data[self.trades_data['timestamp'] == self.timestamp - 100]
+            for _, trade in trades_yesterday.iterrows():
+                symbol = trade['symbol']
+                market_trades[symbol].append(Trade(symbol, trade['price'], trade['quantity'], trade['buyer'], trade['seller'], trade['timestamp']))
+
 
         plainval_obs = {}
         conv_obs = {}
